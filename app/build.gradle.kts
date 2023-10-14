@@ -9,7 +9,7 @@ android {
         viewBinding = true
     }
     namespace = "com.example.firestoredatabase"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.firestoredatabase"
