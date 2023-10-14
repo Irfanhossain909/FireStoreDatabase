@@ -1,5 +1,6 @@
 package com.example.firestoredatabase
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Parcel
@@ -73,11 +74,46 @@ class MainActivity() : AppCompatActivity(), DataAdapter.ItemClickListener{
     }
 
     override fun onEditItemClick(data: Data) {
-        TODO("Not yet implemented")
+        binding.titleEtxt.setText(data.title)
+        binding.dscEtxt.setText(data.descreption)
+        binding.addBtn.text = "Update"
+
+        binding.addBtn.setOnClickListener {
+            val updatetitle = binding.titleEtxt.text.toString()
+            val updatedescreption = binding.dscEtxt.text.toString()
+
+            if (updatetitle.isNotEmpty() && updatedescreption.isNotEmpty()){
+               val updateData = Data(data.id, updatetitle,updatedescreption)
+
+                dataCollection.document(data.id!!)
+                    .set(updateData)
+                    .addOnSuccessListener {
+                        binding.titleEtxt.text?.clear()
+                        binding.dscEtxt.text?.clear()
+                        binding.addBtn.text = "ADD"
+                        adapter.notifyDataSetChanged()
+                        Toast.makeText(this,"data updated",Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    }
+                    .addOnFailureListener{
+                        Toast.makeText(this,"data updated Failed",Toast.LENGTH_SHORT).show()
+                    }
+            }
+        }
     }
 
     override fun onDeleteItemClick(data: Data) {
-        TODO("Not yet implemented")
+        dataCollection.document(data.id!!)
+            .delete()
+            .addOnSuccessListener {
+                adapter.notifyDataSetChanged()
+                fetchData()
+                Toast.makeText(this,"Data Deleted",Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener{
+                Toast.makeText(this,"Data Deletion failed",Toast.LENGTH_SHORT).show()
+            }
     }
 
 }
